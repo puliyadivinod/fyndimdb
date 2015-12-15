@@ -13,15 +13,6 @@ from imdb.models import (ImdbMovieGenres, ImdbGenreCategory,
                          ImdbMovie, ImdbDirector)
 
 
-class ImdbMovieGenresResource(ModelResource):
-    class Meta:
-        queryset = ImdbMovieGenres.objects.all()
-        resource_name = 'moviegenre'
-        serializer = Serializer(formats=['json', 'jsonp', ])
-        always_return_data = True
-        authorization = Authorization()
-
-
 class ImdbGenreCategoryResource(ModelResource):
     class Meta:
         queryset = ImdbGenreCategory.objects.all()
@@ -69,3 +60,23 @@ class ImdbMovieResource(ModelResource):
         }
 
         # authentication = ApiKeyAuthentication()
+
+class ImdbMovieGenresResource(ModelResource):
+    movie = fields.ForeignKey(ImdbMovieResource, 'movie', full=True)
+    genre = fields.ForeignKey(ImdbGenreCategoryResource, 'genre', full=True)
+
+    class Meta:
+        queryset = ImdbMovieGenres.objects.all()
+        resource_name = 'moviegenre'
+        serializer = Serializer(formats=['json', 'jsonp', ])
+        always_return_data = True
+        list_allowed_methods = ['get']
+        detail_allowed_methods = ['get']
+
+        authorization = Authorization()
+
+        filtering = {
+            'genre': ALL_WITH_RELATIONS,
+            'movie': ALL_WITH_RELATIONS,
+            'created_date': ['exact', 'range', 'gt', 'gte', 'lt', 'lte'],
+        }
