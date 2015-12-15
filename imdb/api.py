@@ -30,6 +30,10 @@ class ImdbGenreCategoryResource(ModelResource):
         always_return_data = True
         authorization = Authorization()
 
+        filtering = {
+            'name': ALL,
+        }
+
 
 class ImdbDirectorResource(ModelResource):
     class Meta:
@@ -59,6 +63,8 @@ class ImdbMovieResource(ModelResource):
         filtering = {
             'name': ALL,
             'director': ALL_WITH_RELATIONS,
+            'number_99popularity': ['exact', 'range', 'gt', 'gte', 'lt', 'lte'],
+            'imdb_score': ['exact', 'range', 'gt', 'gte', 'lt', 'lte'],
             'created_date': ['exact', 'range', 'gt', 'gte', 'lt', 'lte'],
         }
 
