@@ -17,11 +17,10 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from tastypie.api import Api
 
-from imdb.api import ImdbMovieResource, ImdbMovieGenresResource
+from imdb.api import ImdbMovieResource
 
 v1_api = Api(api_name='v1')
 v1_api.register(ImdbMovieResource())
-v1_api.register(ImdbMovieGenresResource())
 
 
 urlpatterns = [

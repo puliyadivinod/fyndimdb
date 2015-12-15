@@ -9,11 +9,11 @@ from tastypie import fields
 import json
 
 
-from imdb.models import (ImdbMovieGenres, ImdbGenreCategory,
-                         ImdbMovie, ImdbDirector)
+from imdb.models import (ImdbGenreCategory, ImdbMovie, ImdbDirector)
 
 
 class ImdbGenreCategoryResource(ModelResource):
+
     class Meta:
         queryset = ImdbGenreCategory.objects.all()
         resource_name = 'genrecategory'
@@ -41,6 +41,7 @@ class ImdbDirectorResource(ModelResource):
 
 class ImdbMovieResource(ModelResource):
     director = fields.ForeignKey(ImdbDirectorResource, 'director', full=True)
+    genre = fields.ToManyField('imdb.api.ImdbGenreCategoryResource', 'genre', full=True)
 
     class Meta:
         queryset = ImdbMovie.objects.all()
@@ -50,33 +51,14 @@ class ImdbMovieResource(ModelResource):
         detail_allowed_methods = ['get']
         always_return_data = True
         authorization = Authorization()
+        # authentication = ApiKeyAuthentication()
 
         filtering = {
             'name': ALL,
             'director': ALL_WITH_RELATIONS,
+            'genre': ALL_WITH_RELATIONS,
             'number_99popularity': ['exact', 'range', 'gt', 'gte', 'lt', 'lte'],
             'imdb_score': ['exact', 'range', 'gt', 'gte', 'lt', 'lte'],
             'created_date': ['exact', 'range', 'gt', 'gte', 'lt', 'lte'],
         }
 
-        # authentication = ApiKeyAuthentication()
-
-class ImdbMovieGenresResource(ModelResource):
-    movie = fields.ForeignKey(ImdbMovieResource, 'movie', full=True)
-    genre = fields.ForeignKey(ImdbGenreCategoryResource, 'genre', full=True)
-
-    class Meta:
-        queryset = ImdbMovieGenres.objects.all()
-        resource_name = 'moviegenre'
-        serializer = Serializer(formats=['json', 'jsonp', ])
-        always_return_data = True
-        list_allowed_methods = ['get']
-        detail_allowed_methods = ['get']
-
-        authorization = Authorization()
-
-        filtering = {
-            'genre': ALL_WITH_RELATIONS,
-            'movie': ALL_WITH_RELATIONS,
-            'created_date': ['exact', 'range', 'gt', 'gte', 'lt', 'lte'],
-        }

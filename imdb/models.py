@@ -36,6 +36,7 @@ class ImdbMovie(models.Model):
     director = models.ForeignKey(ImdbDirector)
     number_99popularity = models.DecimalField(db_column='99popularity', max_digits=6, decimal_places=2)  # Field renamed because it wasn't a valid Python identifier.
     imdb_score = models.DecimalField(max_digits=6, decimal_places=2)
+    genre = models.ManyToManyField(ImdbGenreCategory, related_name='genre')
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -46,18 +47,3 @@ class ImdbMovie(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class ImdbMovieGenres(models.Model):
-    movie = models.ForeignKey(ImdbMovie)
-    genre = models.ForeignKey(ImdbGenreCategory)
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = 'imdb_movie_genres'
-        verbose_name = 'Movie Genre'
-        verbose_name_plural = 'Movie Genres'
-
-    def __str__(self):
-        return self.movie
